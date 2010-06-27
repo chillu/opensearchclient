@@ -5,6 +5,8 @@
  */
 class OpenSearchHTTPClient {
 	
+	function __construct() {}
+	
 	/**
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
