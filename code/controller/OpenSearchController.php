@@ -12,7 +12,7 @@ class OpenSearchController extends Controller {
 		'doFormSearch'
 	);
 	
-	protected $template = 'Page';
+	protected $template = array('Page', 'Page');
 	
 	/**
 	 * @var Map of unique identifiers to {@link OpenSearchDescription} objects
