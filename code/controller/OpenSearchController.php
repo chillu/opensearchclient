@@ -82,7 +82,7 @@ class OpenSearchController extends Controller {
 			'Form',
 			new FieldSet(
 				new TextField('q', false),
-				new CheckboxSetField('descriptions', false, $descMap)
+				$descField = new CheckboxSetField('descriptions', false, $descMap)
 			),
 			new FieldSet(
 				new FormAction('doSearch', _t('OpenSearchController.Search', 'Search'))
@@ -90,6 +90,12 @@ class OpenSearchController extends Controller {
 			new RequiredFields(array('q'))
 		);
 		$form->setFormMethod('GET');
+		$form->loadDataFrom($this->request->getVars());
+		$form->disableSecurityToken();
+		
+		// Tick all descriptions by default
+		$descs = $this->request->getVar('descriptions');
+		if(!$descs) $descField->setValue(array_keys($descMap));
 		
 		return $form;
 	}
