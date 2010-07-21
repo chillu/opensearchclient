@@ -47,7 +47,7 @@ class OpenSearchQuery {
 	 * @return DataObjectSet A set of {@link OpenSearchQuery_Result} objects.
 	 */
 	function getResults() {
-		require_once '../../thirdparty/simplepie/simplepie.inc';
+		require_once BASE_PATH . '/opensearchclient/thirdparty/simplepie/simplepie.inc';
 		
 		$url = $this->getUrl();
 		
