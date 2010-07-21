@@ -12,6 +12,11 @@ class OpenSearchController extends Controller {
 		'doFormSearch'
 	);
 	
+	/**
+	 * @var Arraye Used in {@link doSearch()}.
+	 */
+	static $search_results_template = array('OpenSearchResults', 'Page');
+	
 	protected $template = array('Page', 'Page');
 	
 	/**
@@ -59,7 +64,7 @@ class OpenSearchController extends Controller {
 	function Link($action = null) {
 		return Controller::join_links('OpenSearchController', $action);
 	}
-	
+		
 	/**
 	 * @return Form
 	 */
@@ -120,7 +125,7 @@ class OpenSearchController extends Controller {
 		
 		return $this->customise(array(
 			'ResultsBySource' => $resultsBySource
-		))->renderWith(array('OpenSearchResults', 'Page'));
+		))->renderWith(self::$search_results_template);
 	}
 		
 	/**
