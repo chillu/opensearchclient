@@ -107,6 +107,8 @@ class OpenSearchController extends Controller {
 		$resultsBySource = new DataObjectSet();
 		foreach($descriptions as $uid => $description) {
 			$url = $description->getUrlByType('application/atom+xml');
+			if(!$url) throw new Exception(sprintf("No URL template with type 'application/atom+xml' detected for '%s'", $uid));
+			
 			$q = Object::create('OpenSearchQuery', $url['template'], $data['q']);
 			
 			$resultsBySource->push(new ArrayData(array(
