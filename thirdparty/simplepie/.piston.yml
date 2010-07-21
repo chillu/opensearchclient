@@ -1,0 +1,8 @@
+--- 
+format: 1
+handler: 
+  commit: eff771592a113832bc114574464bdb2d08e42bb0
+  branch: tags/1.2
+lock: false
+repository_class: Piston::Git::Repository
+repository_url: http://github.com/simplepie/simplepie.git
