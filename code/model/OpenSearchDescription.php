@@ -33,10 +33,10 @@ class OpenSearchDescription {
 	 */
 	function load() {
 		// TODO Caching
+		$reqClass = (class_exists('SS_HTTPRequest')) ? 'SS_HTTPRequest' : 'OpenSearchHTTPRequest';
 		$c = Object::create('OpenSearchHTTPClient');
-		$response = $c->request(new SS_HTTPRequest('GET', $this->url));
+		$response = $c->request(new $reqClass('GET', $this->url));
 		if($response->getStatusCode() >= 400) throw new Exception(sprintf('Invalid description (Code: %d, Response: %s)', $response->getStatusCode(), $response->getBody()));
-		
 		$this->xml = simplexml_load_string($response->getBody());
 		
 		if(!$this->xml->Url || !count($this->xml->Url)) {

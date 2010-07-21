@@ -52,8 +52,9 @@ class OpenSearchQuery {
 		$url = $this->getUrl();
 		
 		// get data
+		$reqClass = (class_exists('SS_HTTPRequest')) ? 'SS_HTTPRequest' : 'OpenSearchHTTPRequest';
 		$c = Object::create('OpenSearchHTTPClient');
-		$response = $c->request(new SS_HTTPRequest('GET', $this->getUrl()));
+		$response = $c->request(new $reqClass('GET', $this->getUrl()));
 		if($response->isError()) {
 			throw new Exception(sprintf(
 				'Invalid search response for URL "%s": "%s" (Code: %d)', 

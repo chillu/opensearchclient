@@ -11,7 +11,7 @@ class OpenSearchHTTPClient {
 	 * @param SS_HTTPRequest $request
 	 * @return SS_HTTPResponse
 	 */
-	function request(SS_HTTPRequest $request) {
+	function request($request) {
 		$url = $request->getURL();
 		if($request->getVars()) $url .= '?' . http_build_query($request->getVars());
 
@@ -36,7 +36,8 @@ class OpenSearchHTTPClient {
 
 		curl_close($ch);
 		
-		return new SS_HTTPResponse($response, $statusCode);
+		$responseClass = (class_exists('SS_HTTPResponse')) ? 'SS_HTTPResponse' : 'HTTPResponse';
+		return new $responseClass($response, $statusCode);
 	}
 }
 // @codeCoverageIgnoreEnd
