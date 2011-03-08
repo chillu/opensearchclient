@@ -12,13 +12,18 @@ class OpenSearchControllerTest extends FunctionalTest {
 		OpenSearchController::register_description('test2', new OpenSearchDescription('http://test.com/OpenSearchDescriptionTest/opensearch/otherdescription'));
 				
 		Object::useCustomClass('OpenSearchHTTPClient', 'OpenSearchTestHTTPClient');
+		
+		$this->orig['search_results_template'] = OpenSearchController::$search_results_template;
+		OpenSearchController::$search_results_template = array('OpenSearchResults', 'Page');
 	}
 	
 	function tearDown() {
 		parent::tearDown();
 		
 		Object::useCustomClass('OpenSearchHTTPClient', 'OpenSearchHTTPClient');
+		OpenSearchController::$search_results_template = $this->orig['search_results_template'];
 	}
+	
 	
 	function testResults() {
 		$this->get('OpenSearchControllerTest_Controller');
