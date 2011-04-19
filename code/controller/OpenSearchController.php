@@ -13,9 +13,15 @@ class OpenSearchController extends Controller {
 	);
 	
 	/**
-	 * @var Arraye Used in {@link doSearch()}.
+	 * @var Array Used in {@link doSearch()}.
 	 */
 	static $search_results_template = array('OpenSearchResults', 'Page');
+	
+	/**
+	 * @var string
+	 */
+	protected $searchLabel = false;
+	protected $descriptionsLabel = false;
 	
 	protected $template = array('Page', 'Page');
 	
@@ -64,31 +70,39 @@ class OpenSearchController extends Controller {
 	function Link($action = null) {
 		return Controller::join_links('OpenSearchController', $action);
 	}
+	
+	function index($request) {
+		if($request->getVar('q')) {
+			return $this->doSearch($request->getVars(), $this->Form());
+		} else {
+			return $this;
+		}
+	}
 		
 	/**
 	 * @return Form
 	 */
 	function Form() {
-		if(!self::$descriptions) throw new InvalidArgumentException('No $descriptions provided');
+		$descMap = $this->getDescriptions();
 
-		$descMap = array();
-		foreach(self::$descriptions as $uid => $description) {
-			$description->load();
-			$descMap[$uid] = $description->getShortName();
-		}
-		
+		if(!$descMap) throw new InvalidArgumentException('No $descriptions provided');
+
 		$form = new Form(
 			$this,
 			'Form',
 			new FieldSet(
-				new TextField('q', false),
-				$descField = new CheckboxSetField('descriptions', false, $descMap)
+				$query = new TextField('q', $this->searchLabel),
+				$descField = new CheckboxSetField('descriptions', $this->descriptionsLabel, $descMap)
 			),
 			new FieldSet(
 				new FormAction('doSearch', _t('OpenSearchController.Search', 'Search'))
 			),
 			new RequiredFields(array('q'))
 		);
+	
+		// set a nicer error message.
+		$query->setCustomValidationMessage($this->getValidationMessage());
+		
 		$form->setFormMethod('GET');
 		$form->loadDataFrom($this->request->getVars());
 		$form->disableSecurityToken();
@@ -100,6 +114,9 @@ class OpenSearchController extends Controller {
 		return $form;
 	}
 	
+	/**
+	 * Perform the search.
+	 */
 	function doSearch($data, $form = null) {
 		if(!isset($data['q'])) throw new InvalidArgumentException('Parameter "q" missing');
 		
@@ -121,25 +138,52 @@ class OpenSearchController extends Controller {
 			if(!$url) throw new Exception(sprintf("No URL template with type 'application/atom+xml' detected for '%s'", $uid));
 			
 			$q = Object::create('OpenSearchQuery', $url['template'], $data['q']);
+
+			$results = $q->getResults();
 			
 			$resultsBySource->push(new ArrayData(array(
 				'Uid' => $uid,
 				'Title' => $description->getShortName(),
-				'Results' => $q->getResults()
+				'Results' => $results
 			)));
 		}
-		
+
 		return $this->customise(array(
 			'ResultsBySource' => $resultsBySource
 		))->renderWith(self::$search_results_template);
 	}
 		
+	
 	/**
-	 * Generates descriptions from the description elements.
+	 * The validation message for submitting the form
 	 * 
-	 * @return array List of {@link OpenSearchDescription} instances.
+	 * @return String
+	 */
+	function getValidationMessage() {
+		return _t('OpenSearchController.VALIDATIONMESSAGE', 'Please enter a search query');
+	}
+	
+	/**
+	 * Return a map of 'nice' description titles to the ID
+	 * 
+	 * @return array
 	 */
 	function getDescriptions() {
+		$output = array();
+		
 		if(!self::$descriptions) return false;
-	}
+		
+		foreach(self::$descriptions as $uid => $description) {
+			try {
+				$description->load();
+				$output[$uid] = $description->getShortName();
+			}
+			catch(Exception $e) {
+				user_error($e, E_USER_ERROR);
+				continue;
+			}
+		}
+		
+		return $output;
+	} 
 }
