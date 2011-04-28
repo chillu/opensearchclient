@@ -22,6 +22,7 @@ class OpenSearchController extends Controller {
 	 */
 	protected $searchLabel = false;
 	protected $descriptionsLabel = false;
+	protected $defaultSearchText = false;
 	
 	protected $template = array('Page', 'Page');
 	
@@ -91,7 +92,7 @@ class OpenSearchController extends Controller {
 			$this,
 			'Form',
 			new FieldSet(
-				$query = new TextField('q', $this->searchLabel),
+				$query = new TextField('q', $this->searchLabel, $this->defaultSearchText),
 				$descField = new CheckboxSetField('descriptions', $this->descriptionsLabel, $descMap)
 			),
 			new FieldSet(
