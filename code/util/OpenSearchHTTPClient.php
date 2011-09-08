@@ -33,6 +33,8 @@ class OpenSearchHTTPClient {
 		}
 		$response = curl_exec($ch);
 		$statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		
+		if(curl_error($ch)) throw new Exception(curl_error($ch));
 
 		curl_close($ch);
 		
