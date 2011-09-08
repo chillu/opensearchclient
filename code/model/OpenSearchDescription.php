@@ -55,15 +55,15 @@ class OpenSearchDescription {
 					$this->url
 				));
 			}
-
-			foreach($this->xml->Url as $url) {
-				$this->urls[] = array(
-					'template' => (string)$url["template"],
-					'type' => (string)$url["type"],
-				);
-			}
 			
-			$cache->save($xmlStr);
+			$cache->save($xmlStr, $cacheKey);
+		}
+		
+		foreach($this->xml->Url as $url) {
+			$this->urls[] = array(
+				'template' => (string)$url["template"],
+				'type' => (string)$url["type"],
+			);
 		}
 	}
 	
