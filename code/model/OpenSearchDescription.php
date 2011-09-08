@@ -49,9 +49,6 @@ class OpenSearchDescription {
 			if($response->getStatusCode() >= 400) throw new Exception(sprintf('Invalid description (Code: %d, Response: %s)', $response->getStatusCode(), $response->getBody()));
 			$xmlStr = $response->getBody();
 			$this->xml = simplexml_load_string($xmlStr);
-			var_dump($this->url);
-			var_dump($this->xml->Url);
-			var_dump(count($this->xml->Url));
 			if(!$this->xml->Url || !count($this->xml->Url)) {
 				throw new Exception(sprintf(
 					'No valid URLs in description document at %s',
